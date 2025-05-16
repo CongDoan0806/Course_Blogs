@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thanh Toán MoMo</title>
+</head>
+<body>
+    <h2>Thanh toán đơn hàng</h2>
+    <label for="amount">Nhập số tiền (VND):</label>
+    <input type="number" id="amount" value="50000">
+    <button onclick="payWithMomo()">Thanh toán với MoMo</button>
+
+    <script>
+        async function payWithMomo() {
+            const amount = document.getElementById("amount").value;
+            if (!amount || amount <= 0) {
+                alert("Vui lòng nhập số tiền hợp lệ!");
+                return;
+            }
+
+            try {
+                const response = await fetch("http://localhost:3000/momo", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount, orderInfo: "Thanh toán đơn hàng" })
+                });
+
+                const data = await response.json();
+                if (data.payUrl) {
+                    window.location.href = data.payUrl;
+                } else {
+                    alert("Lỗi tạo thanh toán!");
+                }
+            } catch (error) {
+                console.error("Lỗi thanh toán:", error);
+                alert("Có lỗi xảy ra!");
+            }
+        }
+    </script>
+</body>
+</html>
